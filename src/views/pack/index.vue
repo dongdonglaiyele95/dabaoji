@@ -1,9 +1,11 @@
 <template>
-  <div class="home"></div>
+  <div>打包</div>
 </template>
 
 <script>
 export default {
-  name: 'home'
 }
 </script>
+
+<style lang="less" scoped>
+</style>
