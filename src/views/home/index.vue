@@ -44,7 +44,7 @@
       <el-header>
         <span class="icon el-icon-office-building"></span>
         <span class="text"> 北京文脉互动科技有限公司</span>
-        <el-button type="info" class="logout">退出登录</el-button>
+        <el-button @click="logout()" type="info" class="logout">退出登录</el-button>
       </el-header>
       <el-main>
         <router-view></router-view>
@@ -54,7 +54,16 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return{}
+  },
+  methods:{
+    logout() {
+      this.$router.push('/login')
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
