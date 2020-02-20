@@ -1,7 +1,7 @@
 <template>
  <el-form :model="ruleForm"  ref="ruleForm" label-width="100px" class="demo-ruleForm">
   <el-form-item label="选择渠道" prop="channel">
-    <el-select clearable v-model="ruleForm.channel" placeholder="请选择活动区域">
+    <el-select clearable v-model="ruleForm.channel" placeholder="请选择渠道">
       <el-option label="渠道1" value="1"></el-option>
       <el-option label="渠道2" value="2"></el-option>
       <el-option label="渠道3" value="3"></el-option>
