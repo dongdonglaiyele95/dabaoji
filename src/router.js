@@ -1,15 +1,37 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/views/home'
-import Login from '@/views/login'
-import Notfound from '@/views/404'
-import Welcome from '@/views/welcome'
-import ChannelList from '@/views/channellist'
-import NewChannel from '@/views/newchannel'
-import GameList from '@/views/gamelist'
-import NewGame from '@/views/newgame'
-import ChannelPack from '@/views/channelpack'
-import Pack from '@/views/pack'
+
+// 路由懒加载
+// import Home from '@/views/home'
+const Home = () => import('@/views/home')
+
+// import Login from '@/views/login'
+const Login = () => import('@/views/login')
+
+// import Notfound from '@/views/404'
+const Notfound = () => import('@/views/404')
+
+// import Welcome from '@/views/welcome'
+const Welcome = () => import('@/views/welcome')
+
+// import ChannelList from '@/views/channellist'
+const ChannelList = () => import('@/views/channellist')
+
+// import NewChannel from '@/views/newchannel'
+const NewChannel = () => import('@/views/newchannel')
+
+// import GameList from '@/views/gamelist'
+const GameList = () => import('@/views/gamelist')
+
+// import NewGame from '@/views/newgame'
+const NewGame = () => import('@/views/newgame')
+
+// import ChannelPack from '@/views/channelpack'
+const ChannelPack = () => import('@/views/channelpack')
+
+// import Pack from '@/views/pack'
+const Pack = () => import('@/views/pack')
+
 
 Vue.use(Router)
 

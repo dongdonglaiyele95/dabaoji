@@ -3,7 +3,7 @@
     <el-aside width="200px">
       <img src="../../assets/images/logo.png" alt="">
       <el-menu
-        default-active="1"
+        :default-active="$route.path"
         class="el-menu-vertical-demo"
         background-color="green"
         text-color="#fff"
@@ -18,23 +18,23 @@
           <i class="el-icon-s-order"></i>
           <span slot="title">渠道列表</span>
         </el-menu-item>
-        <el-menu-item index="newchannel">
+        <el-menu-item index="/newchannel">
           <i class="el-icon-s-flag"></i>
           <span slot="title">新建渠道</span>
         </el-menu-item>
-        <el-menu-item index="gamelist">
+        <el-menu-item index="/gamelist">
           <i class="el-icon-s-grid"></i>
           <span slot="title">游戏列表</span>
         </el-menu-item>
-        <el-menu-item index="newgame">
+        <el-menu-item index="/newgame">
           <i class="el-icon-first-aid-kit"></i>
           <span slot="title">新建游戏</span>
         </el-menu-item>
-        <el-menu-item index="channelpack">
+        <el-menu-item index="/channelpack">
           <i class="el-icon-copy-document"></i>
           <span slot="title">渠道包</span>
         </el-menu-item>
-        <el-menu-item index="pack">
+        <el-menu-item index="/pack">
           <i class="el-icon-full-screen"></i>
           <span slot="title">打包</span>
         </el-menu-item>
