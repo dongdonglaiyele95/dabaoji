@@ -7,9 +7,6 @@
     <el-form-item label="包名">
       <el-input clearable v-model="ruleForm.packName"></el-input>
     </el-form-item>
-    <el-form-item label="白包路径">
-      <el-input clearable v-model="ruleForm.road"></el-input>
-    </el-form-item>
 
     <!-- 动态添加游戏信息 -->
     <el-form-item>
@@ -68,7 +65,6 @@ export default {
       ruleForm: {
         packName: "",
         gameName: "",
-        road: "",
         channelChoice: "",
         appid: "",
         appkey: "",

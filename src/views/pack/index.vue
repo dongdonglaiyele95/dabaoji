@@ -16,7 +16,7 @@
     </el-form-item>
     <hr>
     <el-form-item>
-      <el-input type="textarea"  :rows="6" placeholder="打包日志" v-model="packForm.textarea"></el-input>
+      <el-input type="textarea"  :rows="28" placeholder="打包日志" v-model="packForm.textarea"></el-input>
     </el-form-item>
   </el-form>
 </template>
