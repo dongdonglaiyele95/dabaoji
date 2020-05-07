@@ -1,7 +1,7 @@
 <template>
   <el-container class="my-container">
     <el-aside width="200px">
-      <img src="../../assets/images/logo.png" alt="">
+      <img src="../../assets/images/logo.png" alt />
       <el-menu
         :default-active="$route.path"
         class="el-menu-vertical-demo"
@@ -14,19 +14,19 @@
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <el-menu-item index="/channellist">
+        <el-menu-item v-if="user.roleType != '运营'" index="/channellist">
           <i class="el-icon-s-order"></i>
           <span slot="title">渠道列表</span>
         </el-menu-item>
-        <el-menu-item index="/newchannel">
+        <el-menu-item v-if="user.roleType != '运营'" index="/newchannel">
           <i class="el-icon-s-flag"></i>
           <span slot="title">新建渠道</span>
         </el-menu-item>
-        <el-menu-item index="/gamelist">
+        <el-menu-item v-if="user.roleType != '运营'" index="/gamelist">
           <i class="el-icon-s-grid"></i>
           <span slot="title">游戏列表</span>
         </el-menu-item>
-        <el-menu-item index="/newgame">
+        <el-menu-item v-if="user.roleType != '运营'" index="/newgame">
           <i class="el-icon-first-aid-kit"></i>
           <span slot="title">新建游戏</span>
         </el-menu-item>
@@ -38,13 +38,21 @@
           <i class="el-icon-full-screen"></i>
           <span slot="title">打包</span>
         </el-menu-item>
+        <el-menu-item v-if="user.roleType == 'admin'" index="/manager">
+          <i class="el-icon-message-solid"></i>
+          <span slot="title">权限管理</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>
       <el-header>
         <span class="icon el-icon-office-building"></span>
-        <span class="text"> 北京文脉互动科技有限公司</span>
-        <el-button @click="logout()" type="info" class="logout">退出登录</el-button>
+        <span class="text">&nbsp;&nbsp;北京文脉互动科技有限公司</span>
+        <div class="right">
+          <span class="icon el-icon-s-custom"></span>
+          <span class="name">{{ user.userName }}</span>
+          <el-button @click="logout()" size="mini" round>退出登录</el-button>
+        </div>
       </el-header>
       <el-main>
         <router-view></router-view>
@@ -54,48 +62,61 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 export default {
   data() {
-    return{}
+    return {};
   },
-  methods:{
+  computed: {
+    ...mapState(["user"])
+  },
+  methods: {
+    ...mapMutations(["delUser"]),
     logout() {
-      // this.$router.push('/login')
+      this.delUser();
+      this.$router.push("/login");
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.my-container{
+.my-container {
   width: 100%;
   height: 100%;
   position: absolute;
   left: 0;
   top: 0;
-  .el-aside{
+  .el-aside {
     background: green;
     img {
       margin-top: 24px;
       margin-left: 8px;
     }
-    .el-menu{
+    .el-menu {
       border-right: none;
     }
   }
-  .el-header{
+  .el-header {
     border-bottom: 1px solid #ddd;
-     line-height: 60px;
+    line-height: 60px;
     .icon {
-      font-size: 24px;
+      font-size: 20px;
       vertical-align: middle;
     }
     .text {
       vertical-align: middle;
+      margin-right: 10px;
+      font-weight: 700;
+      font-size: 16px;
     }
-    .logout {
+    .right {
       float: right;
-      margin-top: 10px;
+      .name {
+        margin: 0 6px;
+        font-size: 15px;
+        vertical-align: middle;
+      }
     }
   }
 }
