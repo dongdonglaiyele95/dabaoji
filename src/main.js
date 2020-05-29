@@ -9,7 +9,6 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
 
-
 //API
 import axios from '@/api'
 Vue.prototype.$http = axios

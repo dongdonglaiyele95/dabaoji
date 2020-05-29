@@ -14,19 +14,19 @@
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <el-menu-item v-if="user.roleType != '运营'" index="/channellist">
+        <el-menu-item v-if="user.user_roleType != '运营'" index="/channellist">
           <i class="el-icon-s-order"></i>
           <span slot="title">渠道列表</span>
         </el-menu-item>
-        <el-menu-item v-if="user.roleType != '运营'" index="/newchannel">
+        <el-menu-item v-if="user.user_roleType != '运营'" index="/newchannel">
           <i class="el-icon-s-flag"></i>
           <span slot="title">新建渠道</span>
         </el-menu-item>
-        <el-menu-item v-if="user.roleType != '运营'" index="/gamelist">
+        <el-menu-item v-if="user.user_roleType != '运营'" index="/gamelist">
           <i class="el-icon-s-grid"></i>
           <span slot="title">游戏列表</span>
         </el-menu-item>
-        <el-menu-item v-if="user.roleType != '运营'" index="/newgame">
+        <el-menu-item v-if="user.user_roleType != '运营'" index="/newgame">
           <i class="el-icon-first-aid-kit"></i>
           <span slot="title">新建游戏</span>
         </el-menu-item>
@@ -38,7 +38,7 @@
           <i class="el-icon-full-screen"></i>
           <span slot="title">打包</span>
         </el-menu-item>
-        <el-menu-item v-if="user.roleType == 'admin'" index="/manager">
+        <el-menu-item v-if="user.user_roleType == 'admin'" index="/manager">
           <i class="el-icon-message-solid"></i>
           <span slot="title">权限管理</span>
         </el-menu-item>
@@ -50,7 +50,7 @@
         <span class="text">&nbsp;&nbsp;北京文脉互动科技有限公司</span>
         <div class="right">
           <span class="icon el-icon-s-custom"></span>
-          <span class="name">{{ user.userName }}</span>
+          <span class="name">{{ user.user_accountName }}</span>
           <el-button @click="logout()" size="mini" round>退出登录</el-button>
         </div>
       </el-header>
@@ -64,6 +64,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
+  name: "home",
   data() {
     return {};
   },

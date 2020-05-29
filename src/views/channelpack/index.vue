@@ -3,11 +3,11 @@
     <!-- 筛选卡 -->
     <el-card>
       <el-form :inline="true" class="demo-form-inline">
-        <el-form-item prop="game" label="游戏">
-          <game-select v-model="reqParams.game"></game-select>
+        <el-form-item prop="game_name" label="游戏">
+          <game-select v-model="reqParams.game_name"></game-select>
         </el-form-item>
-        <el-form-item prop="channel_name" label="渠道">
-          <channel-select v-model="reqParams.channel_name"></channel-select>
+        <el-form-item prop="channel_codeName" label="渠道">
+          <channel-select v-model="reqParams.channel_codeName"></channel-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="search">筛选</el-button>
@@ -16,20 +16,20 @@
     </el-card>
     <!-- 删选结果 -->
     <el-card>
-      <el-table :data="list">
-        <el-table-column prop="appId" label="游戏ID" width="100"></el-table-column>
-        <el-table-column prop="game" label="游戏"></el-table-column>
-        <el-table-column prop="appName" label="游戏名"></el-table-column>
+      <el-table empty-text="正在加载，请稍后..." :data="list||[]">
+        <el-table-column prop="app_id" label="游戏ID" width="170"></el-table-column>
+        <el-table-column prop="game_name" label="游戏"></el-table-column>
+        <el-table-column prop="app_name" label="游戏名"></el-table-column>
         <el-table-column prop="channel_name" label="渠道"></el-table-column>
-        <el-table-column prop="url" label="下载链接" width="330px">
+        <el-table-column prop="app_downloadUrl" label="下载链接" width="580">
           <template v-slot="scope">
             <el-button @click="loadDetail(scope.row)" type="text" size="medium">
               {{
-              scope.row.url
+              scope.row.app_downloadUrl
               }}
             </el-button>
             <el-button
-              @click="copy(scope.row.url)"
+              @click="copy(scope.row.app_downloadUrl)"
               type="primary"
               icon="el-icon-share"
               style="float:right;margin-right:80px"
@@ -52,12 +52,13 @@
 
 <script>
 export default {
+  name: "channelpack",
   data() {
     return {
       reqParams: {
         page: 1,
-        game: "",
-        channel_name: ""
+        game_name: "",
+        channel_codeName: ""
       },
       per_page: 10,
       total: 0,
@@ -91,7 +92,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          window.open(data.url, "_blank");
+          window.open(data.app_downloadUrl, "_blank");
           this.$message.success("正在下载，请稍后");
         })
         .catch(() => {
@@ -103,7 +104,6 @@ export default {
       const {
         data: { data }
       } = await this.$http.post("getPackageList.php", this.reqParams);
-      // console.log(data);
       this.list = data.info;
       this.total = data.count;
     },

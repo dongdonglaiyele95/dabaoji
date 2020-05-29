@@ -1,19 +1,20 @@
 <template>
-    <div class="container"></div>
+  <div class="container"></div>
 </template>
 
 <script>
 export default {
-}
+  name: "404"
+};
 </script>
 
 <style lang="less" scoped>
-.container{
+.container {
   width: 100%;
   height: 100%;
   position: absolute;
   left: 0;
   top: 0;
-  background: url(../../assets/images/404.png) no-repeat center / cover
+  background: url(../../assets/images/404.png) no-repeat center / cover;
 }
 </style>

@@ -1,67 +1,117 @@
 <template>
-  <div class="container" v-loading="loading">
+  <div class="container">
     <el-form :inline="true" ref="packForm" class="demo-ruleForm">
       <el-form-item label="游戏">
-        <game-select @changeSelect="changeSelect" v-model="game"></game-select>
+        <game-select @changeSelect="changeSelect" v-model="game_name"></game-select>
       </el-form-item>
       <el-form-item label="渠道">
-        <channel-select @changeSelect="changeSelect" v-model="channel_name"></channel-select>
+        <channel-select @changeSelect="changeSelect" v-model="channel_codeName"></channel-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getAllGameAppId()">确定</el-button>
       </el-form-item>
-      <div class="pack">
-        <el-button @click="pack()" type="primary">开始打包</el-button>
-        <el-button @click="dialogVisible = true" type="success">查看最近打包日志</el-button>
+      <div class="list">
+        <div class="head">请选择游戏包进行打包</div>
+        <div class="gameAppList">
+          <el-checkbox-group @change="changeApp" v-model="option">
+            <el-checkbox
+              border
+              :key="item.app_id"
+              @change="changeAppId"
+              v-for="item in appIdOption"
+              :label="item"
+              :value="item"
+            >{{item.package}}</el-checkbox>
+          </el-checkbox-group>
+          <div class="pack">
+            <el-checkbox
+              v-if="this.appIdOption.length>0"
+              :indeterminate="isIndeterminate"
+              v-model="checkAll"
+              @change="selAll"
+              border
+              size="large"
+            >全选</el-checkbox>
+            <el-button class="startPack" @click="pack()" type="primary">开始打包</el-button>
+          </div>
+        </div>
+        <div class="packingList">
+          <div class="head2">打包任务列表</div>
+          <el-table fit :data="packingData||[]" style="width: 100%">
+            <el-table-column prop="appName" label="游戏包"></el-table-column>
+            <el-table-column label="状态">
+              <template v-slot="scope">
+                <el-tag type="info" v-if="scope.row.status == 0">准备打包</el-tag>
+                <span v-else-if="scope.row.status == 1">
+                  <el-tag>正在打包</el-tag>
+                  {{x}}
+                </span>
+                <el-tag type="success" v-else-if="scope.row.status == 2">打包成功</el-tag>
+                <el-tag type="danger" v-else>打包失败</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="查看日志">
+              <template v-slot="scope">
+                <el-button
+                  v-if="scope.row.status == 3"
+                  @click="dialogVisible = true"
+                  size="mini"
+                  plain
+                  type="primary"
+                >日志</el-button>
+                <el-dialog title="打包日志" :visible.sync="dialogVisible">
+                  <iframe :src="scope.row.logUrl" frameborder="1"></iframe>
+                </el-dialog>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
       </div>
-      <div>请选择要打包的游戏包</div>
-      <div class="gameAppList">
-        <el-checkbox-group @change="changeApp" v-model="option" :max="1">
-          <el-checkbox
-            border
-            :key="item.appId"
-            @change="changeAppId"
-            v-for="item in appIdOption"
-            :label="item"
-            :value="item"
-          >{{item.package}}</el-checkbox>
-        </el-checkbox-group>
-      </div>
-      <el-dialog title="最近打包日志" :visible.sync="dialogVisible">
-        <iframe src="http://192.168.2.238:8080/v1/api/log/log.log" frameborder="1"></iframe>
-      </el-dialog>
     </el-form>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
 export default {
+  name: "pack",
   data() {
     return {
       dialogVisible: false, //弹窗关闭与否
       appIdOption: [], //游戏包列表
-      option: [], //选中的单个游戏包
+      option: [], //选中的游戏包
       flag: false, //单个游戏包选中与否
-      appId: "", //游戏包唯一标识
-      channel_name: "", //筛选渠道
-      game: "" //筛选游戏 必选项
+      isIndeterminate: false, //对el-checkbox控制不完整的全选状态
+      checkAll: false, //对el-checkbox控制全选状态
+      app_id: "", //游戏包唯一标识
+      channel_codeName: "", //筛选渠道
+      game_name: "", //筛选游戏 必选项
+      packingData: [], //正在打包的游戏包 前台
+      x: "" //加载点
     };
   },
-  computed: {
-    ...mapState(["loading"])
+  created() {
+    this.packingList();
+    let timer = window.setInterval(async () => {
+      this.packingList();
+    }, 2000);
+    window.setInterval(() => this.countSecond(), 800);
   },
   methods: {
-    // load的映射
-    ...mapMutations(["setLoad"]),
+    //加载圈
+    countSecond() {
+      this.x = this.x == "......" ? "." : this.x + ".";
+    },
     // 获取所有游戏ID
     async getAllGameAppId() {
+      if (this.flag) {
+        return false;
+      }
       const {
         data: { data }
       } = await this.$http.get(
-        `game/getAllGameAppId.php?game=${this.game}&channel_name=${this.channel_name}`
+        `game/getAllGameAppId.php?game_name=${this.game_name}&channel_codeName=${this.channel_codeName}`
       );
-      if (this.game == "") {
+      if (this.game_name == "") {
         this.$message.warning("游戏是筛选必选项");
         return false;
       }
@@ -69,15 +119,17 @@ export default {
       if (data.length == 0) {
         this.$message.info("暂无游戏包");
       }
-      // console.log(data);
+    },
+    //全选
+    selAll(val) {
+      this.option = val ? this.appIdOption : [];
     },
     // 选择的具体游戏包
     changeApp(data) {
-      if (data.length > 0) {
-        this.appId = Number(data[0].appId);
-      }
+      let checkedCount = data.length;
+      this.checkAll = checkedCount === this.appIdOption.length;
     },
-    // 具体游戏包选中与否
+    // 具体游戏包选中与否 ture/false
     changeAppId(data) {
       this.flag = data;
     },
@@ -87,34 +139,28 @@ export default {
       this.appIdOption = [];
       this.flag = false;
     },
-    // 打包
-    pack() {
-      if (Number(this.appId) == 0 || !this.flag) {
-        this.$message.info("请选择游戏包");
-        return false;
-      }
-      this.setLoad(true);
-      this.$message.success("开始打包，请稍后...");
-      // 定时器
-      let timer = window.setInterval(async () => {
-        const {
-          data: { result }
-        } = await this.$http.get(`package.php?appid=${Number(this.appId)}`);
-        if (result != 10006) {
-          resultValue(result);
-        }
-      }, 20000);
-      let _this = this;
-      function resultValue(result) {
-        window.clearInterval(timer);
-        _this.setLoad(false);
-        if (result == 10000) {
-          _this.$message.success("打包成功，打开日志即可查看打包结果");
+    //请求打包列表
+    async packingList() {
+      const {
+        data: { data }
+      } = await this.$http.get("getPackingList.php");
+      this.packingData = data;
+    },
+    // 进行打包
+    async pack() {
+      if (this.option.length > 0) {
+        var packArr = this.option.map(v => {
+          return v.app_id;
+        });
+        const { data } = await this.$http.get(`package.php?app_id=${packArr}`);
+        if (data.result == 10000) {
+          this.$message.success(data.description);
         } else {
-          _this.$message.info("打包失败");
+          this.$message.warning(data.description);
         }
+      } else {
+        this.$message.info("请选择游戏包");
       }
-      //
     }
   }
 };
@@ -140,18 +186,47 @@ export default {
     }
   }
 }
-.pack {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px 0 20px 250px;
-}
-.gameAppList {
-  height: 260px;
-  width: 1000px;
-  border: 1px solid #eee;
-  padding: 10px;
-  overflow: auto;
-  margin-top: 20px;
+.list {
+  position: relative;
+  .head {
+    margin-bottom: 30px;
+  }
+  .gameAppList {
+    position: absolute;
+    height: 600px;
+    width: 900px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    overflow: auto;
+    .el-checkbox-group {
+      height: 500px;
+    }
+    .pack {
+      position: absolute;
+      bottom: 10px;
+      .startPack {
+        position: absolute;
+        width: 180px;
+        height: 50px;
+        left: 400px;
+        bottom: 10px;
+      }
+    }
+  }
+  .packingList {
+    position: absolute;
+    left: 950px;
+    width: 600px;
+    height: 620px;
+    margin-right: 100px;
+    border: 1px solid #ddd;
+    overflow: auto;
+    text-align: center;
+    .head2 {
+      font-weight: 700;
+      margin: 16px 0;
+    }
+  }
 }
 .el-checkbox-group {
   display: flex;

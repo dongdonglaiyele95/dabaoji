@@ -3,8 +3,8 @@
     <el-option
       :key="i"
       v-for="(item, i) in gameOptions"
-      :label="item.gameName"
-      :value="item.gameName"
+      :label="item.game_name"
+      :value="item.game_name"
     ></el-option>
   </el-select>
 </template>
@@ -28,10 +28,9 @@ export default {
         data: { data }
       } = await this.$http.get("game/getAllGame.php");
       this.gameOptions = data;
-      // console.log(data);
     },
-    changeGame(gameName) {
-      this.$emit("input", gameName);
+    changeGame(game_name) {
+      this.$emit("input", game_name);
       this.$emit("changeSelect"); //打包界面 根据筛选条件改变清空选中的游戏包
     }
   }

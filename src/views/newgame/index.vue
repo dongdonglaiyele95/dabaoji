@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-tag type="info">{{ ruleForm.appId ? "修改" : "新建" }}游戏信息</el-tag>
+    <el-tag type="info">{{ ruleForm.app_id ? "修改" : "新建" }}游戏信息</el-tag>
     <el-form
       :model="ruleForm"
       :rules="rules"
@@ -8,82 +8,72 @@
       label-width="150px"
       class="demo-ruleForm"
     >
+      <!-- 上传素材插件-->
+      <div class="uploadImage">
+        <upload-image v-model="ruleForm.icon_url">icon</upload-image>
+        <upload-image v-model="ruleForm.icon_url">icon</upload-image>
+        <upload-image v-model="ruleForm.icon_url">icon</upload-image>
+        <upload-image v-model="ruleForm.icon_url">icon</upload-image>
+        <upload-image v-model="ruleForm.icon_url">icon</upload-image>
+      </div>
+
       <h3>游戏信息</h3>
-      <el-form-item prop="game" label="游戏">
-        <game-select v-model="ruleForm.game"></game-select>
+      <el-form-item prop="game_name" label="游戏">
+        <game-select v-model="ruleForm.game_name"></game-select>
       </el-form-item>
-      <el-form-item prop="appName" label="游戏名称">
-        <el-input clearable v-model="ruleForm.appName"></el-input>
+      <el-form-item prop="app_displayName" label="app_displayName">
+        <el-input clearable v-model="ruleForm.app_displayName"></el-input>
       </el-form-item>
-      <el-form-item prop="bundleId" label="包名">
-        <el-input clearable v-model="ruleForm.bundleId"></el-input>
+      <el-form-item prop="app_name" label="游戏名称">
+        <el-input clearable v-model="ruleForm.app_name"></el-input>
       </el-form-item>
-      <el-form-item prop="game_version" label="游戏版本号">
-        <el-input clearable v-model="ruleForm.game_version"></el-input>
+      <el-form-item prop="app_bundleId" label="包名">
+        <el-input clearable v-model="ruleForm.app_bundleId"></el-input>
       </el-form-item>
-      <el-form-item prop="os" label="OS">
-        <el-select @change="changeOs" v-model="ruleForm.os" placeholder="请选择操作系统">
+      <el-form-item prop="app_version" label="游戏版本号">
+        <el-input clearable v-model="ruleForm.app_version"></el-input>
+      </el-form-item>
+      <el-form-item prop="app_os" label="OS">
+        <el-select v-model="ruleForm.app_os" placeholder="请选择操作系统">
           <el-option :key="item.id" v-for="item in osOption" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <!--  { id: "1", name: "iOS" }, iOS固定配置 -->
-      <div class="iOSsetting" v-if="ruleForm.os=='1'">
-        <el-form-item prop="project_root" label="游戏根目录">
-          <el-input clearable v-model="ruleForm.project_root"></el-input>
-        </el-form-item>
-        <el-form-item prop="codesign_p12" label="打包签名证书">
-          <el-input clearable v-model="ruleForm.codesign_p12"></el-input>
-        </el-form-item>
-        <el-form-item prop="Provisioning_Profile" label="打包签名描述文件">
-          <el-input clearable v-model="ruleForm.Provisioning_Profile"></el-input>
-        </el-form-item>
-      </div>
-      <!--  { id: "2", name: "Android" }  Android固定配置-->
-      <div v-if="ruleForm.os=='2'">Android 配置</div>
-      <!-- 动态添加游戏信息 -->
 
-      <!-- <el-form-item>
+      <!-- 动态添加游戏信息 -->
+      <el-form-item>
         <el-button type="info" @click="addGame">添加其他配置</el-button>
       </el-form-item>
       <el-form-item :key="i" v-for="(game, i) in ruleForm.game_info">
-        <el-input clearable v-model="game.key"></el-input>
-        <el-input clearable v-model="game.value"></el-input>
+        <el-input clearable v-model.trim="game.key"></el-input>
+        <el-input class="channelSetting" clearable v-model.trim="game.value"></el-input>
         <el-button type="warning" @click.prevent="removeGame(game)">删除</el-button>
-      </el-form-item>-->
+      </el-form-item>
 
       <!-- 渠道 -->
       <h3>渠道配置</h3>
-      <el-form-item prop="channel_name" label="选择渠道">
-        <channel-select v-model="ruleForm.channel_name"></channel-select>
+      <el-form-item prop="channel_plat" label="PLAT">
+        <el-input clearable v-model="ruleForm.channel_plat"></el-input>
       </el-form-item>
-      <el-form-item prop="channel_appid" label="渠道 appid">
-        <el-input clearable v-model="ruleForm.channel_appid"></el-input>
+      <el-form-item prop="channel_codeName" label="选择渠道">
+        <channel-select @changeSelect="changeSelect" v-model="ruleForm.channel_codeName"></channel-select>
       </el-form-item>
-      <el-form-item prop="channel_appkey" label="渠道 appkey">
-        <el-input class="channelSetting" clearable v-model="ruleForm.channel_appkey"></el-input>
-      </el-form-item>
-      <el-form-item prop="channel_others" label="备用参数">
-        <el-input clearable v-model="ruleForm.channel_others"></el-input>
-      </el-form-item>
-      <el-form-item prop="payNotifyUrl" label="支付回调地址">
-        <el-input class="channelSetting" clearable v-model="ruleForm.payNotifyUrl"></el-input>
-      </el-form-item>
-      <el-form-item prop="plat" label="PLAT">
-        <el-input clearable v-model="ruleForm.plat"></el-input>
+      <!-- channel_paramter -->
+      <el-form-item :key="i + 'x'" v-for="(item, i) in ruleForm.channel_paramter">
+        <el-input disabled v-model="item.key"></el-input>
+        <el-input class="channelSetting" clearable v-model="item.value"></el-input>
       </el-form-item>
 
       <!-- 动态添加渠道信息 -->
-      <!-- 
       <el-form-item>
         <el-button type="info" @click="addChannel">添加其他信息</el-button>
       </el-form-item>
       <el-form-item :key="i + 'a'" v-for="(channel, i) in ruleForm.channel_info">
-        <el-input clearable v-model="channel.key"></el-input>
-        <el-input clearable v-model="channel.value"></el-input>
+        <el-input clearable v-model.trim="channel.key"></el-input>
+        <el-input class="channelSetting" clearable v-model.trim="channel.value"></el-input>
         <el-button type="warning" @click.prevent="removeChannel(channel)">删除</el-button>
-      </el-form-item>-->
+      </el-form-item>
 
-      <el-form-item v-if="!ruleForm.appId">
+      <el-form-item v-if="!ruleForm.app_id">
         <el-button class="cli" medium type="primary" @click="submitForm('ruleForm')">保存游戏信息</el-button>
       </el-form-item>
       <el-form-item v-else>
@@ -94,50 +84,48 @@
 </template>
 
 <script>
+import defaultPng from "@/assets/images/default.png";
 export default {
+  name: "newgame",
   data() {
     return {
+      defaultPng,
       osOption: [
         { id: "1", name: "iOS" },
         { id: "2", name: "Android" }
       ],
       ruleForm: {
+        icon_url: "",
         //游戏配置
-        appId: "",
-        bundleId: "",
-        game: "",
-        appName: "",
-        game_version: "", //游戏版本号
-        os: "", //操作系统
-        //ios固定配置
-        project_root: "", //游戏根目录
-        codesign_p12: "", //打包签名证书
-        Provisioning_Profile: "", //打包签名描述文件
+        app_id: "",
+        app_bundleId: "",
+        game_name: "", //选择游戏 项目
+        app_displayName: "", //游戏 桌面名称
+        app_name: "", //游戏在运营层⾯面的昵称
+        app_version: "", //游戏版本号
+        app_os: "", //操作系统
         //渠道配置
-        channel_name: "",
-        channel_appid: "",
-        plat: "",
-        channel_appkey: "",
-        channel_others: "",
-        payNotifyUrl: "" //支付回调地址
-        // game_info: [
-        //   //游戏信息
-        //   {
-        //     key: "",
-        //     value: ""
-        //   }
-        // ],
-        // channel_info: [
-        //   //渠道信息
-        //   {
-        //     key: "",
-        //     value: ""
-        //   }
-        // ]
+        channel_codeName: "",
+        channel_plat: "",
+        channel_paramter: [],
+        game_info: [
+          //游戏信息
+          {
+            key: "",
+            value: ""
+          }
+        ],
+        channel_info: [
+          //渠道信息
+          {
+            key: "",
+            value: ""
+          }
+        ]
       },
       // 校验规则
       rules: {
-        game: [
+        game_name: [
           {
             required: true,
             message: "请选择游戏",
@@ -145,7 +133,15 @@ export default {
             trigger: "blur"
           }
         ],
-        appName: [
+        app_displayName: [
+          {
+            required: true,
+            message: "请输入app_displayName名称",
+            min: 1,
+            trigger: "blur"
+          }
+        ],
+        app_name: [
           {
             required: true,
             message: "请输入游戏名称",
@@ -153,7 +149,7 @@ export default {
             trigger: "blur"
           }
         ],
-        os: [
+        app_os: [
           {
             required: true,
             message: "请选择操作系统",
@@ -161,31 +157,7 @@ export default {
             trigger: "blur"
           }
         ],
-        project_root: [
-          {
-            required: true,
-            message: "请输入游戏根目录",
-            min: 1,
-            trigger: "blur"
-          }
-        ],
-        codesign_p12: [
-          {
-            required: true,
-            message: "请输入打包签名证书",
-            min: 1,
-            trigger: "blur"
-          }
-        ],
-        Provisioning_Profile: [
-          {
-            required: true,
-            message: "请输入打包签名描述文件",
-            min: 1,
-            trigger: "blur"
-          }
-        ],
-        game_version: [
+        app_version: [
           {
             required: true,
             message: "请输入游戏版本号",
@@ -193,7 +165,7 @@ export default {
             trigger: "blur"
           }
         ],
-        plat: [
+        channel_plat: [
           {
             required: true,
             message: "请输入PLAT",
@@ -205,106 +177,127 @@ export default {
     };
   },
   created() {
-    this.ruleForm.appId = this.$route.query.id;
-    if (this.ruleForm.appId) {
+    this.ruleForm.game_info.splice(0, 1);
+    this.ruleForm.channel_info.splice(0, 1);
+    this.ruleForm.app_id = this.$route.query.id;
+    if (this.ruleForm.app_id) {
       this.getGame();
     }
   },
   watch: {
     "$route.query.id": function(newVal, oldVal) {
       if (newVal) {
-        this.ruleForm.appId = this.$route.query.id;
-        if (this.ruleForm.appId) {
+        this.ruleForm.app_id = this.$route.query.id;
+        if (this.ruleForm.app_id) {
           this.getGame();
         }
         return false;
       }
       this.ruleForm = {
-        bundleId: "",
-        game: "",
-        appName: "",
-        os: "",
-        //ios固定配置
-        project_root: "",
-        codesign_p12: "",
-        Provisioning_Profile: "",
-        game_version: "",
+        icon_url: this.defaultPng,
+        app_bundleId: "",
+        game_name: "",
+        app_displayName: "",
+        app_name: "",
+        app_os: "",
+        app_version: "",
         osOption: [
           { id: "1", name: "iOS" },
           { id: "2", name: "Android" }
         ],
         // 渠道配置
-        channel_name: "",
-        channel_appid: "",
-        plat: "",
-        channel_appkey: "",
-        channel_others: "",
-        payNotifyUrl: ""
-        // game_info: [
-        //   //游戏信息
-        //   {
-        //     key: "",
-        //     value: ""
-        //   }
-        // ],
-        // channel_info: [
-        //   //渠道信息
-        //   {
-        //     key: "",
-        //     value: ""
-        //   }
-        // ]
+        channel_codeName: "",
+        channel_plat: "",
+        channel_paramter: [],
+        game_info: [
+          //游戏信息
+          {
+            key: "",
+            value: ""
+          }
+        ],
+        channel_info: [
+          //渠道信息
+          {
+            key: "",
+            value: ""
+          }
+        ]
       };
+      this.ruleForm.game_info.splice(0, 1);
+      this.ruleForm.channel_info.splice(0, 1);
     }
   },
   methods: {
-    //修改操作系统
-    changeOs(os) {
-      this.ruleForm.project_root = "";
-      this.ruleForm.codesign_p12 = "";
-      this.ruleForm.Provisioning_Profile = "";
+    // 改变渠道
+    changeSelect(val) {
+      if (val) {
+        this.ruleForm.channel_paramter = JSON.parse(val.channel_paramter);
+      } else {
+        this.ruleForm.channel_paramter = [];
+      }
     },
-    //单个游戏信息getGameInfo.php
+    // 单个游戏信息getGameInfo.php
     async getGame() {
       const {
         data: { data }
       } = await this.$http.get(
-        `game/getGameInfo.php?appId=${this.ruleForm.appId}`
+        `game/getGameInfo.php?app_id=${this.ruleForm.app_id}`
       );
       this.ruleForm = data;
-      // this.ruleForm.game_info = JSON.parse(data.game_info);
-      // this.ruleForm.channel_info = JSON.parse(data.channel_info);
+      if (data.game_info) {
+        this.ruleForm.game_info = JSON.parse(data.game_info);
+      }
+      if (data.channel_info) {
+        this.ruleForm.channel_info = JSON.parse(data.channel_info);
+      }
+      if (data.channel_paramter) {
+        this.ruleForm.channel_paramter = JSON.parse(data.channel_paramter);
+      }
     },
-
+    // 提交信息改变格式
+    formatter() {
+      this.ruleForm.game_info = JSON.stringify(this.ruleForm.game_info);
+      this.ruleForm.channel_info = JSON.stringify(this.ruleForm.channel_info);
+      this.ruleForm.channel_paramter = JSON.stringify(
+        this.ruleForm.channel_paramter
+      );
+    },
+    // 提交后转化回来格式
+    toFofmatter() {
+      this.ruleForm.game_info = JSON.parse(this.ruleForm.game_info);
+      this.ruleForm.channel_info = JSON.parse(this.ruleForm.channel_info);
+      this.ruleForm.channel_paramter = JSON.parse(
+        this.ruleForm.channel_paramter
+      );
+    },
     // 修改游戏信息
     modifyGame() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          // this.ruleForm.game_info = JSON.stringify(this.ruleForm.game_info);
-          // this.ruleForm.channel_info = JSON.stringify(
-          //   this.ruleForm.channel_info
-          // );
+          this.formatter();
           this.$http.post("game/modifyGame.php", this.ruleForm).then(res => {
-            this.$router.push("gamelist");
-            this.$message.success("修改游戏信息成功");
+            if (res.data.result == 10000) {
+              this.toFofmatter();
+              this.$router.push("gamelist");
+              this.$message.success("修改游戏信息成功");
+            } else {
+              this.$message.error("修改游戏信息失败");
+            }
           });
         } else {
           this.$message.error("信息错误");
         }
       });
     },
-
-    // 提交信息
+    // 提交游戏信息
     submitForm() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          // this.ruleForm.game_info = JSON.stringify(this.ruleForm.game_info);
-          // this.ruleForm.channel_info = JSON.stringify(
-          //   this.ruleForm.channel_info
-          // );
+          this.formatter();
           this.$http.post("game/newGame.php", this.ruleForm).then(res => {
+            this.toFofmatter();
             this.$router.push("/gamelist");
-            // console.log(res);
             this.$message.success("保存游戏信息成功");
           });
         } else {
@@ -312,7 +305,6 @@ export default {
         }
       });
     },
-
     // 删除游戏
     removeGame(item) {
       var index = this.ruleForm.game_info.indexOf(item);
@@ -322,6 +314,9 @@ export default {
     },
     // 添加游戏
     addGame() {
+      if (this.ruleForm.game_info == "") {
+        this.ruleForm.game_info = [];
+      }
       this.ruleForm.game_info.push({
         key: "",
         value: ""
@@ -336,6 +331,9 @@ export default {
     },
     // 添加渠道
     addChannel() {
+      if (this.ruleForm.channel_info == "") {
+        this.ruleForm.channel_info = [];
+      }
       this.ruleForm.channel_info.push({
         key: "",
         value: ""
@@ -346,17 +344,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.el-input {
-  width: 250px;
-  margin-right: 15px;
-}
-.iOSsetting {
-  .el-input {
-    width: 460px;
+.el-form {
+  position: relative;
+  .uploadImage {
+    position: absolute;
+    display: flex;
+    left: 500px;
+    margin-top: 60px;
   }
 }
+.el-input {
+  width: 220px;
+  margin-right: 15px;
+}
 .channelSetting {
-  width: 450px;
+  width: 420px;
 }
 .cli {
   margin-top: 30px;

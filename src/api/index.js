@@ -14,14 +14,15 @@ axios.defaults.transformRequest = [function (data) {
 }]
 
 //基准地址
-axios.defaults.baseURL = 'http://192.168.2.238:8080/v1/api'
+axios.defaults.baseURL = 'http://192.168.2.238:8080/v2/api'
 
 //拦截器
 axios.interceptors.request.use(config => {
   if (store.state.user.token) {
     config.params = {
       token: store.state.user.token,
-      uid: store.state.user.uid
+      uid: store.state.user.user_id,
+      tm: new Date().getTime()
     }
   }
   return config
@@ -31,7 +32,6 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(res => {
   const status = res.data.result
-  // console.log(status)
   if (status == '10003' || status == '10004') {
     store.commit('delUser')
     router.push('/login')

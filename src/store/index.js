@@ -7,14 +7,11 @@ import auth from '@/auth'
 
 export default new Vuex.Store({
   state: {
-    loading: false,
-    user: auth.getUser()
+    user: auth.getUser(),
+    getChannelPage: auth.getChannelPage(), //channelPage
+    getGameList: auth.getGameList(), //GameList
   },
   mutations: {
-    // loading
-    setLoad(state, loading) {
-      state.loading = loading
-    },
     // user
     setUser(state, user) {
       state.user = user
@@ -23,6 +20,16 @@ export default new Vuex.Store({
     delUser(state) {
       state.user = {}
       auth.delUser()
+    },
+    // channelPage
+    setChannelPage(state, page) {
+      state.getChannelPage = page
+      auth.setChannelPage(page)
+    },
+    //GameList
+    setGameList(state, game) {
+      state.getGameList = game
+      auth.setGameList(game)
     },
   },
   actions: {

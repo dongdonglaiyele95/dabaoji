@@ -3,8 +3,8 @@
     <el-option
       :key="item.channel_id"
       v-for="item in channelOptions"
-      :label="item.channel_name"
-      :value="item.channel_name"
+      :label="item.channel_codeName"
+      :value="item"
     ></el-option>
   </el-select>
 </template>
@@ -27,12 +27,12 @@ export default {
       const {
         data: { data }
       } = await this.$http.get("channel/getAllChannelName.php");
-      // console.log(data);
       this.channelOptions = data;
     },
-    changeChannel(channel_name) {
-      this.$emit("input", channel_name);
-      this.$emit("changeSelect"); //打包界面 根据筛选条件改变清空选中的游戏包
+    // 改变渠道
+    changeChannel(data) {
+      this.$emit("input", data.channel_codeName || "");
+      this.$emit("changeSelect", data); //打包界面 根据筛选条件改变清空选中的游戏包
     }
   }
 };
